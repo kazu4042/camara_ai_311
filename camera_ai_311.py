@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import time
+import numpy as np
 
 HAND_CONNECTIONS = [
     (0,1),(1,2),(2,3),(3,4),
@@ -30,6 +31,9 @@ cap = cv2.VideoCapture(0)
 
 while cap.isOpened():
     ret, frame = cap.read()
+    
+    black_frame = np.zeros_like(frame)
+    
     if not ret:
         break
 
@@ -40,8 +44,12 @@ while cap.isOpened():
 
     timestamp = int(time.time() * 1000)
     result = landmarker.detect_for_video(mp_image, timestamp)
+    
+    
 
     if result.hand_landmarks:
+        
+        print("検出！")
         for hand in result.hand_landmarks:
             points = []
             
@@ -50,14 +58,14 @@ while cap.isOpened():
                 x = int(point.x * frame.shape[1])
                 y = int(point.y * frame.shape[0])
                 points.append((x, y))
-                cv2.circle(frame, (x, y), 5, (0, 255, 0), -1)
+                cv2.circle(black_frame, (x, y), 5, (0, 255, 0), -1)
 
             # 線を描く
             for connection in HAND_CONNECTIONS:
                 start_idx, end_idx = connection
-                cv2.line(frame, points[start_idx], points[end_idx], (255, 0, 0), 2)
+                cv2.line(black_frame, points[start_idx], points[end_idx], (255, 0, 0), 2)
 
-    cv2.imshow("Hand Tracking", frame)
+    cv2.imshow("Hand Tracking", black_frame)
 
     key = cv2.waitKey(1)
     if key == 27 or cv2.getWindowProperty("Hand Tracking", cv2.WND_PROP_VISIBLE) < 1:
