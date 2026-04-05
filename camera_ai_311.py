@@ -29,6 +29,9 @@ landmarker = HandLandmarker.create_from_options(options)
 
 cap = cv2.VideoCapture(0)
 
+cv2.namedWindow("Hand Tracking", cv2.WND_PROP_FULLSCREEN)
+cv2.setWindowProperty("Hand Tracking", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+
 while cap.isOpened():
     ret, frame = cap.read()
     
@@ -65,8 +68,12 @@ while cap.isOpened():
                 start_idx, end_idx = connection
                 cv2.line(black_frame, points[start_idx], points[end_idx], (255, 0, 0), 2)
 
+    
+    
+    
     cv2.imshow("Hand Tracking", black_frame)
-
+    
+    
     key = cv2.waitKey(1)
     if key == 27 or cv2.getWindowProperty("Hand Tracking", cv2.WND_PROP_VISIBLE) < 1:
         break
